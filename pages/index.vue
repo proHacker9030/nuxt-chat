@@ -7,18 +7,34 @@
         </v-card-title>
         <v-card-text>
           <v-form ref="form" v-model="valid" lazy-validation>
-            <v-text-field v-model="name" :counter="16" :rules="nameRules" label="Имя" required></v-text-field>
+            <v-text-field
+              v-model="name"
+              :counter="16"
+              :rules="nameRules"
+              label="Имя"
+              required
+            ></v-text-field>
 
-            <v-text-field v-model="room" :rules="roomRules" label="Введите комнату" required></v-text-field>
+            <v-text-field
+              v-model="room"
+              :rules="roomRules"
+              label="Введите комнату"
+              required
+            ></v-text-field>
 
-            <v-btn :disabled="!valid" color="primary" class="mr-4" @click="submit">Войти</v-btn>
+            <v-btn
+              :disabled="!valid"
+              color="primary"
+              class="mr-4"
+              @click="submit"
+              >Войти</v-btn
+            >
           </v-form>
         </v-card-text>
       </v-card>
     </v-flex>
   </v-layout>
 </template>
-
 
 <script>
 import { mapMutations } from "vuex";
@@ -53,6 +69,15 @@ export default {
           name: this.name,
           room: this.room
         };
+
+        this.$socket.emit("userJoined", user, data => {
+          if (typeof data === "string") console.error(data);
+          else {
+            user.id = data.userId;
+            this.setUser(user);
+            this.$router.push("/chat");
+          }
+        });
 
         this.setUser(user);
         this.$router.push("/chat");
